@@ -3,13 +3,12 @@ package com.educandoweb.course.service;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.OneToMany;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.educandoweb.course.entities.User;
 import com.educandoweb.course.repositories.UserRepositories;
+import com.educandoweb.course.service.exceptions.ResourceNotFoundException;
 
 @Service
 public class UserService {
@@ -23,7 +22,7 @@ public class UserService {
 	
 	public User findById(Long id) {
 		Optional<User> obj = repository.findById(id);
-		return obj.get();
+		return obj.orElseThrow(()-> new ResourceNotFoundException(id));
 	}
 	
 	public User insert(User obj) {
@@ -37,8 +36,7 @@ public class UserService {
 	public User update (Long id, User obj) {
 		User entity = repository.getById(id);
 		updateData(entity, obj);
-		return repository.save(entity);
-		
+		return repository.save(entity);	
 	}
 
 	private void updateData(User entity, User obj) {
